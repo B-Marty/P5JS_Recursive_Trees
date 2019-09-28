@@ -16,13 +16,15 @@ function draw() {
 }
 
 function branche(x,y,l,coeff_l,angle,angle1,angle2,p){
-    strokeWeight(1);
+    strokeWeight(p + 1);
     
+    strokeCap(PROJECT);
     stroke(map(p,0,8,255,0));
     fill(map(p,0,8,255,0));
     
     line(x,y,x + cos(angle) * l,y + sin(angle) * l);
-    ellipse(x,y,4,4);
+    ellipse(x + cos(angle) * l,y + sin(angle) * l,4,4);
+    
     if(p > 0){
         branche(x + cos(angle) * l,
                 y + sin(angle) * l,
