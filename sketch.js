@@ -7,7 +7,7 @@ function draw() {
     background(150,150,255);
     branche(width / 2,
             height - 1,
-            200,
+            windowHeight / 4,
             0.7,
             (270 / 360) * (2 * 3.14),
             (map(mouseX,0,width,0,360) / 360) * (2 * 3.14),
