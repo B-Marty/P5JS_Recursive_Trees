@@ -4,7 +4,7 @@ function setup() {
 }
 
 function draw() {
-    background(128,128,128);
+    background(150,150,255);
     branche(width / 2,
             height - 1,
             200,
