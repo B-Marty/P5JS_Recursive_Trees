@@ -17,11 +17,10 @@ function draw() {
 
 function branche(x,y,l,coeff_l,angle,angle1,angle2,p){
     strokeWeight(1);
-    if(p == 0){
-        stroke(255,0,0);
-    } else {
-        stroke(255,255,255);
-    }
+    
+    stroke(map(p,0,8,255,0));
+    fill(map(p,0,8,255,0));
+    
     line(x,y,x + cos(angle) * l,y + sin(angle) * l);
     ellipse(x,y,4,4);
     if(p > 0){
