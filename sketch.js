@@ -1,6 +1,6 @@
 
 /* P5JS_Binary_Tree
-* autor : boyer marty
+* author : boyer marty
 */
 
 
@@ -19,6 +19,8 @@ var slider_lenght; // Slider - Lenght of the tronk
 var slider_coeff_lenght; // Slider - Reduction coefficient of the lenght
 var slider_number_branch; // Slider - Number of branch for each node
 var slider_depth; // Slider - Depth of the tree
+var checkbox_nodes; // Checkbox - Enable / disable nodes
+var checkbox_branches; // Checkbox - Enable / disable branches
 
 
 
@@ -45,7 +47,7 @@ function draw() {
            length,
            coeff_length,
            (270 / 360) * (2 * 3.14),
-           (map(mouseX,0,width,0,360*number) / 360) * (2 * 3.14),
+           (map(mouseX,0,width,0,max(360*(number-1),360)) / 360) * (2 * 3.14),
            (map(mouseY,0,height,0,360) / 360) * (2 * 3.14),
            depth,
            number);
@@ -91,9 +93,14 @@ function branch(x,y,l,coeff_l,angle,ref_angle,r,d,n){
     strokeCap(PROJECT);
     stroke(map(d,0,depth,255,0));
     fill(map(d,0,depth,255,0));
-
-    line(x,y,x + cos(angle) * l,y + sin(angle) * l);
-    ellipse(x + cos(angle) * l,y + sin(angle) * l,4,4);
+    
+    if(checkbox_branches.checked()){
+        line(x,y,x + cos(angle) * l,y + sin(angle) * l);
+    }
+    
+    if(checkbox_nodes.checked()){
+        ellipse(x + cos(angle) * l,y + sin(angle) * l,4,4);
+    }
 
     if(d > 0){
         for(let i = 0; i < n; i ++){
@@ -144,6 +151,12 @@ function setup_DOM(){
     slider_depth = createSlider(1,20,8,1);
     slider_depth.position(10,160);
     slider_depth.style('width','400px');
+    
+    checkbox_nodes = createCheckbox('nodes', true); 
+    checkbox_nodes.position(10,190);
+    
+    checkbox_branches = createCheckbox('branches', true); 
+    checkbox_branches.position(10,220);
 }
 
 
@@ -154,12 +167,16 @@ function display_menu(){
         slider_coeff_lenght.show();
         slider_number_branch.show();
         slider_depth.show();
+        checkbox_nodes.show();
+        checkbox_branches.show();
     } else {
         button_reset.hide();
         slider_lenght.hide();
         slider_coeff_lenght.hide();
         slider_number_branch.hide();
         slider_depth.hide();
+        checkbox_nodes.hide();
+        checkbox_branches.hide();
     }
 
 }
@@ -175,5 +192,5 @@ function reset_values(){
     slider_coeff_lenght.value(coeff_length);
     slider_number_branch.value(number);
     slider_depth.value(depth);
-   
+    checkbox_nodes.checked(true);
 }
