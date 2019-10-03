@@ -25,7 +25,7 @@ var checkbox_branches; // Checkbox - Enable / disable branches
 
 
 function setup() {  
-    createCanvas(max(windowWidth, 500), windowHeight);
+    createCanvas(max(windowWidth - 20, 500), windowHeight - 20);
     setup_DOM();
     // DEFAUL VALUES
     reset_values();
