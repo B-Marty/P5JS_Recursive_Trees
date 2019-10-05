@@ -1,2 +1,2 @@
-# P5JS_Arbre_binaire
-This is a 'tools' for creating a binary tree.
+# P5JS_Trees
+This is a 'tools' for creating a trees.
