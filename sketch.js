@@ -1,5 +1,5 @@
 
-/* P5JS_Binary_Tree
+/* P5JS_Trees
 * author : boyer marty
 */
 
