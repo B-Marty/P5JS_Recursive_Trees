@@ -1,2 +1,2 @@
-# P5JS_Trees
-This is a 'tools' for creating a trees.
+# P5JS_Recursive_Trees
+This is a 'tools' for creating recursives trees.
