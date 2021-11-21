@@ -5,14 +5,25 @@
 
 // ***** VARIABLES
 // BRANCH PARAMETERS
+var angle;
+var rotation;
 var length;
 var coeff_length;
 var depth;
-var nuber;
+var branch_number;
+
+// TMP VARIABLES TO AVOID SOME CALCULUS
+var angle_in_PI;
+var rotation_in_PI;
+var lengths;
+var angle_in_PI_divided_by_branch_number;
+var strokes;
+var fills;
+
 
 // UI ELEMENTS
-var checkbox_tools_menu; // Checkbox - Display Tools Menu
-var checkbox_values; // Checkbox- Display values of the trees
+var checkbox_tools_menu; // Checkbox - Display Tool Menu
+var checkbox_values; // Checkbox - Display values of the tree
 var button_reset; // Button - Reset
 var slider_lenght; // Slider - Lenght of the tronk
 var slider_coeff_lenght; // Slider - Reduction coefficient of the lenght
@@ -26,101 +37,96 @@ var checkbox_branches; // Checkbox - Enable / disable branches
 function setup() {  
     createCanvas(max(windowWidth, 500), windowHeight);
     setup_DOM();
-    // DEFAUL VALUES
+    textSize(15);
+    strokeCap(PROJECT);
+    // DEFAULT VALUES
     reset_values();
 }
 
 function draw() {
     background(150,150,255);
 
-
-    if(checkbox_tools_menu.checked()){
-        length = slider_lenght.value();
-        coeff_length = slider_coeff_lenght.value();
-        number = slider_number_branch.value();
-        depth = slider_depth.value();
+    angle = map(mouseX,0,width,0,360*branch_number);
+    rotation = map(mouseY,0,height,0,360);
+    length = slider_lenght.value();
+    coeff_length = slider_coeff_lenght.value();
+    branch_number = slider_number_branch.value();
+    depth = slider_depth.value();
+    
+    angle_in_PI = map(angle, 0, 360, 0, TWO_PI);
+    rotation_in_PI = map(rotation, 0, 360, 0, TWO_PI);
+    lengths = []; 
+    strokes = [];
+    fills = [];
+    tmp_l = length;
+    for(let i=depth; i>=0; i--){
+        lengths[i] = tmp_l;
+        tmp_l *= coeff_length;
+        strokes[i] = map(i,depth,0,0,255);
+        fills[i] = strokes[i];
     }
-
-    branch(width / 2,
-           height,
-           length,
-           coeff_length,
-           (270 / 360) * (2 * 3.14),
-           (map(mouseX,0,width,0,max(360*(number-1),360)) / 360) * (2 * 3.14),
-           (map(mouseY,0,height,0,360) / 360) * (2 * 3.14),
-           depth,
-           number);
+    angle_in_PI_divided_by_branch_number = angle_in_PI / branch_number;
 
 
-    // Values of the tree
-    textSize(15);
+    translate(width/2, height);
+    branch(depth);
+    translate(-width/2, -height);
+
+
+    // Print values of the tree
     fill(255);
     stroke(150,150,255);
     if(checkbox_values.checked()){
-        text('angle (x) : ' + nf(map(mouseX,0,width,0,360*number),0,2).toString(), width - 130, 15);
-        text('rotation (y) : ' + nf(map(mouseY,0,height,0,360),0,2).toString(), width - 130, 35);
-        text('leaves : ' + (number ** depth).toString(), width - 130, 55);
-        text('length : ' + length,width - 130,75);
-        text('coeff length : ' + coeff_length,width - 130,95);
-        text('branch number : ' + number,width - 130,115);
-        text('depth : ' + depth,width - 130,135);
+        text('angle (x) : ' + nf(angle,0,2).toString(), width - 150, 15);
+        text('rotation (y) : ' + nf(rotation,0,2).toString(), width - 150, 35);
+        text('leaves : ' + (branch_number ** depth).toString(), width - 150, 55);
+        text('length : ' + length,width - 150,75);
+        text('coeff length : ' + coeff_length,width - 150,95);
+        text('branch number : ' + branch_number,width - 150,115);
+        text('depth : ' + depth,width - 150,135);
     }
 
     if(checkbox_tools_menu.checked()){
         text('length : ' + length,410,70);
         text('coeff length : ' + coeff_length,410,100);
-        text('branch number : ' + number,410,130);
+        text('branch number : ' + branch_number,410,130);
         text('depth : ' + depth,410,160);
     }
+
+    noLoop();
 }
 
+function mouseMoved(){
+    loop();
+}
 
-function branch(x,y,l,coeff_l,angle,ref_angle,r,d,n){
-    /**
-    *    x : starting point in axis x
-    *    y : starting point in axis y
-    *    l : length of the trunk
-    *    coeff_l : coefficient of the length of the next branch : l * coeff_l
-    *    angle : angle of the branch compared to the trigonometric circle (trunk 3 PI / 2)
-    *    ref_angle : reference angle
-    *    r : rotation of the branches relative to the node
-    *    d : depth of the tree
-    *    n : number of branch for each node
-    **/
-
-    strokeWeight(d + 1);
-
-    strokeCap(PROJECT);
-    stroke(map(d,0,depth,255,0));
-    fill(map(d,0,depth,255,0));
+function branch(d){
+    strokeWeight(d+1);
+    stroke(strokes[d]);
+    fill(fills[d]);
 
     if(checkbox_branches.checked()){
-        line(x,y,x + cos(angle) * l,y + sin(angle) * l);
+        line(0, 0, 0, -lengths[d]);
     }
+
+    translate(0, -lengths[d]);
 
     if(checkbox_nodes.checked()){
-        ellipse(x + cos(angle) * l,y + sin(angle) * l,4,4);
+        ellipse(0, 0,4,4);
     }
+    
+    rotate(-rotation_in_PI);
 
     if(d > 0){
-        for(let i = 0; i < n; i ++){
-            let a;
-            if(n == 1){
-                a = angle - ref_angle + r
-            } else {
-                a = angle + map(i,0,n-1,-1,1) * ref_angle + r;
-            }
-            branch(x + cos(angle) * l,
-                   y + sin(angle) * l,
-                   l * coeff_l,
-                   coeff_l,
-                   a,
-                   ref_angle,
-                   r,
-                   d-1,
-                   n);
+        for(let i=0; i<branch_number; i++){
+            branch(d-1);
+            rotate(angle_in_PI_divided_by_branch_number);
         }
+        rotate(-angle_in_PI);
     }
+    rotate(rotation_in_PI);
+    translate(0, lengths[d]);
+
 }
 
 
@@ -181,7 +187,7 @@ function display_menu(){
 
 }
 
-
+// SET DEFAULT SLIDERS VALUES
 function reset_values(){
     length = height / 4;
     coeff_length = 0.7;
